@@ -38,7 +38,14 @@ function main() {
 
   // get all tasks
   app.get('/tasks', async (req, res) => {
-    const tasks = await task.GetTasks();
+    const { id, completed, title }: any = req.query;
+
+    const params = new Map<string, any>();
+    id && params.set('id', id);
+    completed && params.set('completed', completed);
+    title && params.set('title', title);
+
+    const tasks = await task.GetTasks(params);
     res.status(200).json(tasks.rows);
   });
 

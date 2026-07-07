@@ -14,8 +14,27 @@ export interface Tasks {
   tasks: Task[];
 }
 
+enum filter {
+  completed,
+  title,
+  id,
+}
+
 export class TaskService {
   constructor() {}
+
+  async QueryBuilder(request: Map<string, any>) {
+    // where $1 = $2 and $3 = $4
+    const query: string = '';
+    const values: any[] = [];
+    if (!request) {
+      return;
+    }
+    for (const [key, value] of request.entries()) {
+      console.log(key, ' = ', value);
+    }
+    return [query, values];
+  }
 
   async CreateTask(title: string, description: string) {
     const newTask: Task = {
@@ -44,8 +63,10 @@ export class TaskService {
     return newTask;
   }
 
-  async GetTasks() {
-    return await pool.query('select * from tasks');
+  async GetTasks(params: Map<string, any>) {
+    const { q, values } = await this.QueryBuilder(params);
+    let query = 'select * from tasks' + q;
+    return await pool.query(query, values);
   }
 
   async GetTaskByID(id: string) {
