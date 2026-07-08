@@ -38,9 +38,7 @@ function main() {
 
   // get all tasks
   app.get('/tasks', async (req, res) => {
-    const params = ({ id, completed, title } = req.query);
-
-    const tasks = await task.GetTasks(params);
+    const tasks = await task.GetTasks(req.query);
     res.status(200).json(tasks);
   });
 
