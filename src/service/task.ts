@@ -18,7 +18,6 @@ export class TaskService {
   constructor() {}
 
   async QueryBuilder(request: any) {
-    console.log('this is request', Object.keys(request));
 
     let counter: number = 1;
     let conditions: any[] = [];
@@ -82,12 +81,10 @@ export class TaskService {
   async GetTasks(params: any) {
     const { query, values } = await this.QueryBuilder(params);
 
-    console.log('this is val', values);
     let final_query = 'select * from tasks';
     if (query) {
       final_query += ' ' + query;
     }
-    console.log('this is query', final_query);
     return (await pool.query(final_query, values)).rows;
   }
 
