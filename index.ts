@@ -1,5 +1,5 @@
 import express from 'express';
-import { loadEnvFile, title } from 'node:process';
+import { loadEnvFile } from 'node:process';
 import { TaskService } from './src/service/task';
 loadEnvFile();
 
