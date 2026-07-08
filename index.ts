@@ -1,5 +1,5 @@
 import express from 'express';
-import { loadEnvFile } from 'node:process';
+import { loadEnvFile, title } from 'node:process';
 import { TaskService } from './src/service/task';
 loadEnvFile();
 
@@ -38,15 +38,10 @@ function main() {
 
   // get all tasks
   app.get('/tasks', async (req, res) => {
-    const { id, completed, title }: any = req.query;
-
-    const params = new Map<string, any>();
-    id && params.set('id', id);
-    completed && params.set('completed', completed);
-    title && params.set('title', title);
+    const params = ({ id, completed, title } = req.query);
 
     const tasks = await task.GetTasks(params);
-    res.status(200).json(tasks.rows);
+    res.status(200).json(tasks);
   });
 
   // create the task

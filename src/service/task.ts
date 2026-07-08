@@ -14,26 +14,42 @@ export interface Tasks {
   tasks: Task[];
 }
 
-enum filter {
-  completed,
-  title,
-  id,
-}
-
 export class TaskService {
   constructor() {}
 
-  async QueryBuilder(request: Map<string, any>) {
+  async QueryBuilder(request: any) {
+    console.log('this is request', Object.keys(request));
+
+    let counter: number = 1;
+    let conditions: any[] = [];
     // where $1 = $2 and $3 = $4
-    const query: string = '';
+
     const values: any[] = [];
-    if (!request) {
-      return;
+    if (Object.keys(request).length === 0) {
+      return { query: '', values };
     }
-    for (const [key, value] of request.entries()) {
-      console.log(key, ' = ', value);
+    for (const [key, value] of Object.entries(request)) {
+      values.push(value);
+      let query;
+      query = key + ' =' + ' $' + counter;
+      counter++;
+      conditions.push(query);
     }
-    return [query, values];
+
+    let query: string = 'where';
+    // Disclaimer: I know using join here with ' and ' is better 
+    for (let i = 0; i < conditions.length; i++) {
+      query = query + ' ' + conditions[i];
+      try {
+        if (conditions[i + 1]) {
+          query = query + ' and';
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+
+    return { query, values };
   }
 
   async CreateTask(title: string, description: string) {
@@ -63,10 +79,16 @@ export class TaskService {
     return newTask;
   }
 
-  async GetTasks(params: Map<string, any>) {
-    const { q, values } = await this.QueryBuilder(params);
-    let query = 'select * from tasks' + q;
-    return await pool.query(query, values);
+  async GetTasks(params: any) {
+    const { query, values } = await this.QueryBuilder(params);
+
+    console.log('this is val', values);
+    let final_query = 'select * from tasks';
+    if (query) {
+      final_query += ' ' + query;
+    }
+    console.log('this is query', final_query);
+    return (await pool.query(final_query, values)).rows;
   }
 
   async GetTaskByID(id: string) {
