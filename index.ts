@@ -38,8 +38,8 @@ function main() {
 
   // get all tasks
   app.get('/tasks', async (req, res) => {
-    const tasks = await task.GetTasks();
-    res.status(200).json(tasks.rows);
+    const tasks = await task.GetTasks(req.query);
+    res.status(200).json(tasks);
   });
 
   // create the task

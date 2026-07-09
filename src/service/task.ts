@@ -17,6 +17,40 @@ export interface Tasks {
 export class TaskService {
   constructor() {}
 
+  async QueryBuilder(request: any) {
+
+    let counter: number = 1;
+    let conditions: any[] = [];
+    // where $1 = $2 and $3 = $4
+
+    const values: any[] = [];
+    if (Object.keys(request).length === 0) {
+      return { query: '', values };
+    }
+    for (const [key, value] of Object.entries(request)) {
+      values.push(value);
+      let query;
+      query = key + ' =' + ' $' + counter;
+      counter++;
+      conditions.push(query);
+    }
+
+    let query: string = 'where';
+    // Disclaimer: I know using join here with ' and ' is better 
+    for (let i = 0; i < conditions.length; i++) {
+      query = query + ' ' + conditions[i];
+      try {
+        if (conditions[i + 1]) {
+          query = query + ' and';
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+
+    return { query, values };
+  }
+
   async CreateTask(title: string, description: string) {
     const newTask: Task = {
       id: uuidv4(),
@@ -44,8 +78,14 @@ export class TaskService {
     return newTask;
   }
 
-  async GetTasks() {
-    return await pool.query('select * from tasks');
+  async GetTasks(params: any) {
+    const { query, values } = await this.QueryBuilder(params);
+
+    let final_query = 'select * from tasks';
+    if (query) {
+      final_query += ' ' + query;
+    }
+    return (await pool.query(final_query, values)).rows;
   }
 
   async GetTaskByID(id: string) {
