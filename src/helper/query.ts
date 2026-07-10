@@ -5,7 +5,8 @@ enum Filter {
   completed,
   search,
 }
-
+// TODO: Remove this any type and define a taskfilter type that can validate it
+// use ur own types instead of the ones defined for you from express, ex ParsedQs
 export function QueryBuilder(request: any) {
   let counter: number = 1;
   let conditions: any[] = [];
