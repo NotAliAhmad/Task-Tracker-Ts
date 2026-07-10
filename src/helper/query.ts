@@ -6,7 +6,7 @@ enum Filter {
   search,
 }
 
-export function FilterQueryBuilder(request: any) {
+export function QueryBuilder(request: any) {
   let counter: number = 1;
   let conditions: any[] = [];
 

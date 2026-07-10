@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { pool } from '../db';
-import { FilterQueryBuilder } from '../helper/query';
+import { QueryBuilder } from '../helper/query';
 
 export interface Task {
   id?: string;
@@ -46,7 +46,7 @@ export class TaskService {
   }
 
   async GetTasks(params: any) {
-    const { query, values } = await FilterQueryBuilder(params);
+    const { query, values } = QueryBuilder(params);
 
     let final_query = 'select * from tasks';
     if (query) {
